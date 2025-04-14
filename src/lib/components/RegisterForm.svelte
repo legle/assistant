@@ -3,7 +3,6 @@
   let password = "";
   let confirmPassword = "";
   let name = "";
-  let image = "";
   let error = "";
   let success = "";
   let loading = false;
@@ -38,8 +37,7 @@
     console.log("Formulário submetido");
     console.log("Dados do formulário:", { 
       email, 
-      name, 
-      image, 
+      name,  
       password: "[REDACTED]", 
       confirmPassword: "[REDACTED]" 
     });
@@ -60,7 +58,7 @@
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email, password, name, image: image || null })
+        body: JSON.stringify({ email, password, name })
       });
 
       console.log("Resposta recebida:", response.status);
@@ -116,17 +114,6 @@
   </div>
 
   <div>
-    <label for="image" class="block text-sm font-medium text-gray-700">URL da Imagem (opcional)</label>
-    <input
-      type="url"
-      id="image"
-      bind:value={image}
-      placeholder="https://exemplo.com/imagem.jpg"
-      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-    />
-  </div>
-
-  <div>
     <label for="password" class="block text-sm font-medium text-gray-700">Senha</label>
     <input
       type="password"
@@ -151,11 +138,11 @@
   </div>
 
   {#if error}
-    <div class="text-red-600 text-sm">{error}</div>
+    <div class="text-red-600 text-sm" role="alert">{error}</div>
   {/if}
 
   {#if success}
-    <div class="text-green-600 text-sm">{success}</div>
+    <div class="text-green-600 text-sm" role="alert">{success}</div>
   {/if}
 
   <button

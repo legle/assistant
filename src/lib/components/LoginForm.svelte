@@ -70,7 +70,7 @@
   </div>
 
   {#if error}
-    <div class="text-red-600 text-sm">{error}</div>
+    <div class="text-red-600 text-sm" role="alert">{error}</div>
   {/if}
 
   <button

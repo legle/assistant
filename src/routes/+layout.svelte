@@ -131,11 +131,12 @@
                             <button 
                                 bind:this={menuButton}
                                 on:click={toggleDropdown}
-                                class="flex items-center focus:outline-none rounded-full focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                aria-expanded={showDropdown ? "true" : "false"}
-                                aria-haspopup="true"
-                                aria-label="Menu do perfil de {user.name}"
+                                type="button"
+                                class="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                 id="user-menu-button"
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                aria-label="{user.name}"
                             >
                                 {#if user.image}
                                     <img 
@@ -152,7 +153,7 @@
                                         {user.name ? user.name[0].toUpperCase() : 'U'}
                                     </div>
                                 {/if}
-                                <span class="sr-only">Abrir menu do perfil</span>
+                                <span class="sr-only">Abrir menu</span>
                             </button>
 
                             <!-- Menu dropdown -->
@@ -185,21 +186,6 @@
                                     </button>
                                 </div>
                             {/if}
-                        </div>
-                    {:else}
-                        <div class="space-x-4">
-                            <a
-                                href="/login"
-                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            >
-                                Entrar
-                            </a>
-                            <a
-                                href="/register"
-                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            >
-                                Registrar
-                            </a>
                         </div>
                     {/if}
                 </div>
