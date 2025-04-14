@@ -1,42 +1,106 @@
 <script lang="ts">
     import { page } from '$app/stores';
+    import { goto } from "$app/navigation";
+    import { invalidate } from "$app/navigation";
+
+    let user = $page.data.user;
+    let loading = false;
+
+    async function handleLogout(event: Event) {
+        event.preventDefault();
+        console.log("Iniciando processo de logout");
+        
+        loading = true;
+        try {
+            console.log("Enviando requisição para /api/auth/logout");
+            const response = await fetch("/api/auth/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            console.log("Resposta recebida:", response.status);
+            const data = await response.json();
+            console.log("Dados recebidos:", data);
+
+            if (response.ok) {
+                console.log("Logout realizado com sucesso");
+                // Invalida os dados do usuário
+                await invalidate('app:user');
+                // Redireciona para a página de login
+                await goto("/login");
+            } else {
+                console.error("Erro ao fazer logout:", data.error);
+            }
+        } catch (error) {
+            console.error("Erro ao fazer logout:", error);
+        } finally {
+            loading = false;
+        }
+    }
+
+    $: user = $page.data.user;
 </script>
 
 <div class="min-h-screen bg-gray-50">
     <!-- Barra de navegação -->
-    <nav class="bg-[#6200A3] text-white shadow">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a 
-                        href="/" 
-                        class="flex items-center gap-2 text-white hover:text-white/80 transition-colors"
-                        aria-label="Ir para página inicial"
-                    >
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                        <span class="font-semibold">OnCall Assist</span>
-                    </a>
+    <nav class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a 
+                            href="/" 
+                            class="text-xl font-bold text-indigo-600"
+                        >
+                            FAQ App
+                        </a>
+                    </div>
                 </div>
-                <div class="flex items-center gap-6">
-                    <a 
-                        href="/faq" 
-                        class="text-white/80 hover:text-white transition-colors flex items-center gap-1 {$page.url.pathname === '/faq' ? 'text-white font-medium' : ''}"
-                        aria-current={$page.url.pathname === '/faq' ? 'page' : undefined}
-                    >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>FAQ</span>
-                    </a>
+
+                <div class="flex items-center">
+                    {#if user}
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center space-x-2">
+                                {#if user.image}
+                                    <img src={user.image} alt={user.name || "Avatar"} class="h-8 w-8 rounded-full" />
+                                {/if}
+                                <span class="text-gray-700">{user.name}</span>
+                            </div>
+                            <form on:submit|preventDefault={handleLogout}>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                                >
+                                    {loading ? "Saindo..." : "Sair"}
+                                </button>
+                            </form>
+                        </div>
+                    {:else}
+                        <div class="space-x-4">
+                            <a
+                                href="/login"
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            >
+                                Entrar
+                            </a>
+                            <a
+                                href="/register"
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            >
+                                Registrar
+                            </a>
+                        </div>
+                    {/if}
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Conteúdo da página -->
-    <main>
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <slot />
     </main>
 </div>
